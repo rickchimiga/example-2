@@ -1,4 +1,44 @@
 <?php
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+class CreateProductsTable extends Migration
+{
+    public function up()
+    {
+        Schema::create('products', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('name', 30);
+            $table->text('description')->nullable();
+            $table->string('quantity');
+            $table->decimal('price', 5, 2);
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+  
+    public function down()
+    {
+        Schema::drop('products');
+    }
+}
+
+
+
+<?php
+namespace App;
+use Illuminate\Database\Eloquent\Model;
+class Product extends Model
+{
+    protected $fillable = ['name','description','quantity','price'];
+    protected $guarded = ['id', 'created_at', 'update_at'];
+    protected $table = 'products';
+}
+
+
+
+
+<?php
 namespace App\Http\Controllers;
 use App\Http\Requests\ProductRequest;
 use App\Product;
@@ -55,3 +95,32 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('alert-success','Product hasbeen deleted!');
     }
 }
+
+
+
+
+
+
+
+
+
+<?php
+...
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
+    Route::get('/', 'AdminController@getIndex');
+    Route::get('projetos', 'ProjetosController@getIndex');
+    Route::get('projetos/inserir', 'ProjetosController@getInserir');
+    Route::post('projetos/inserir', 'ProjetosController@postInserir');
+    Route::get('projetos/editar/{id}', 'ProjetosController@getEditar');
+    Route::post('projetos/editar/{id}', 'ProjetosController@postEditar');
+    Route::post('projetos/deletar/{id}', 'ProjetosController@postDeletar');
+...
+});
+?>
+
+
+
+
+
+
+
